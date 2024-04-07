@@ -1,5 +1,6 @@
 import sys
 import xml.etree.ElementTree as ET
+import html
 
 def extract_xml_urls(opml_file):
     """
@@ -24,7 +25,16 @@ def process_opml_file(opml_file):
     modified_lines = []
     for line in lines:
         if 'title="' in line:
-            modified_line = line.replace("&", "&amp;")
+
+            # Find the position of the title attribute
+            title_start = line.find('title="') + len('title="')
+            title_end = line.find('"', title_start)
+
+            # Extract the title
+            title = line[title_start:title_end]
+            modified_title = html.escape(title)
+
+            modified_line = line.replace(title, modified_title)
             modified_lines.append(modified_line)
         else:
             modified_lines.append(line)
