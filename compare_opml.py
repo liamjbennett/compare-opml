@@ -73,8 +73,15 @@ if __name__ == "__main__":
 
     print('')
     print(f'URLs that do not appear in {existing_opml_file}:')
-    for url in added_urls:
-        print('  :: '+url)
+    if added_urls:
+        for url in added_urls:
+            print('  :: '+url)
+    else:
+        print('  None')
+
     print(f'URLs that do not appear in {new_opml_file}:')
-    for url in missing_urls:
-        print('  :: '+url)
+    if missing_urls:
+        for url in missing_urls:
+            print('  :: '+url)
+    else:
+        print('  None')
