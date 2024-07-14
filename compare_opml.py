@@ -93,4 +93,65 @@ def compare_opml_urls(existing_file, new_file):
     return added_urls
 
 def compare_urls_with_category(existing_file, new_file, category):
-    # Extract URLs from bo
+    # Extract URLs from both files
+    existing_urls = extract_category_urls(existing_file,category)
+    new_urls = extract_category_urls(new_file,category)
+
+    # Sort URLs in alphabetical order
+    existing_urls.sort()
+    new_urls.sort()
+
+    # Find the URLs that appear in the new list but not in the existing list
+    added_urls = set(new_urls) - set(existing_urls)
+
+    return added_urls
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python compare_opml.py existing.opml new.opml")
+        sys.exit(1)
+
+    existing_opml_file = sys.argv[1]
+    new_opml_file = sys.argv[2]
+
+    # Process both OPML files
+    process_opml_file(existing_opml_file)
+    process_opml_file(new_opml_file)
+
+    added_urls = compare_opml_urls(existing_opml_file, new_opml_file)
+    missing_urls = compare_opml_urls(new_opml_file, existing_opml_file)
+
+    missing_categories = compare_urls_with_category(existing_opml_file, new_opml_file, '')
+
+    wrong_categories = []
+    for category in extract_categories(existing_opml_file):
+        wrong_categories += compare_urls_with_category(new_opml_file, existing_opml_file, category)
+        
+
+    print(f'URLs that do not appear in {existing_opml_file}:')
+    if added_urls:
+        for url in added_urls:
+            print('  :: '+url)
+    else:
+        print('  None')
+
+    print(f'URLs that do not appear in {new_opml_file}:')
+    if missing_urls:
+        for url in missing_urls:
+            print('  :: '+url)
+    else:
+        print('  None')
+
+    print(f'URLs with the missing category in {new_opml_file}:')
+    if missing_categories:
+        for url in missing_categories:
+            print('  :: '+url)
+    else:
+        print('  None')
+
+    print(f'URLs with the wrong category:')
+    if wrong_categories:
+        for url in wrong_categories:
+            print('  :: '+url)
+    else:
+        print('  None')
